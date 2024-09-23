@@ -22,12 +22,14 @@ jobs:
       - name: Trigger VPM Workflow
         uses: actions/github-script@v7
         with:
+          github-token: ${{ secrets.REPO_ACCESS_TOKEN }} # Provide the token for authentication
           script: |
-            const { owner, repo, ref } = context.repo; // Get the current repository context
+            const { owner, repo } = context.repo; // Get the current repository context
+            const ref = context.ref; // Get the current ref (branch/tag)
             const response = await github.actions.createWorkflowDispatch({
-              owner: '${{ env.REPO_OWNER }}',           // Specify the repository owner
-              repo: '${{ env.REPO_NAME }}',              // Specify the repository name
-              workflow_id: 'build-listing.yml',         // Change to the filename of the workflow you want to trigger
-              ref: ref                                   // Use the current branch
+              owner: process.env.REPO_OWNER,         // Specify the repository owner
+              repo: process.env.REPO_NAME,           // Specify the repository name
+              workflow_id: 'build-listing.yml',      // Change to the filename of the workflow you want to trigger
+              ref: ref                                 // Use the current branch
             });
             console.log('Workflow triggered:', response); // Log the response for debugging
