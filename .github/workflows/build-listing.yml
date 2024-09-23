@@ -1,11 +1,7 @@
-name: Trigger VPM Workflow
+name: Update VPM Workflow
 
 on: 
   workflow_dispatch:
-  workflow_run:
-    workflows: [Build and Release]
-    types:
-      - completed
   release:
     types: [published, created, edited, unpublished, deleted, released]
 
@@ -20,6 +16,7 @@ env:
 jobs:
   dispatch:
     runs-on: ubuntu-latest
+    if: github.event.release.draft == false
     steps:
       - name: Trigger VPM Workflow
         uses: actions/github-script@v7
