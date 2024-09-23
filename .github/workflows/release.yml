@@ -51,19 +51,12 @@ jobs:
           echo "::error title=Release Already Exists::A release with version ${{ env.version }} already exists. Cannot create duplicate releases."
           exit 1
 
-
-      - name: Delete existing release (for update)
-        if: ${{ github.event.inputs.release_type == 'update' && env.release_id != '' }}
-        run: |
-          curl -X DELETE -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
-          "https://api.github.com/repos/${{ github.repository }}/releases/${{ env.release_id }}"
-
       - name: Create ZIP file
         run: |
           zip -r "${{ env.name }}-${{ env.version }}.zip" . \
           -x '.git/*' '.github/*' '*.md' '*.bak'
 
-      - name: Create a new release (test or public)
+      - name: Create or update a release
         id: create_release
         uses: actions/create-release@v1
         env:
@@ -75,6 +68,7 @@ jobs:
           prerelease: false
 
       - name: Upload ZIP to release
+        if: ${{ github.event.inputs.release_type != 'create' }}
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -85,6 +79,7 @@ jobs:
           asset_content_type: application/zip
 
       - name: Upload package.json to release
+        if: ${{ github.event.inputs.release_type != 'create' }}
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -94,30 +89,8 @@ jobs:
           asset_name: "package.json"
           asset_content_type: application/json
 
-      - name: Copy files to Packages/${{ env.name }}
-        run: |
-          mkdir -p "Packages/${{ env.name }}"
-          rsync -av --exclude='.git' --exclude='.github' --exclude='*.md' --exclude='*.zip' . "Packages/${{ env.name }}/"
-
-      - name: List files in workspace
-        run: |
-          echo "Files in workspace:"
-          find . -type f
-
-      - run: find "Packages/${{ env.name }}/" -name \*.meta >> metaList
-      
-      - name: What is in metaList?
-        run: |
-          echo "Contents of metaList:"
-          cat metaList
-
-      - name: Create UnityPackage
-        uses: pCYSl5EDgo/create-unitypackage@master
-        with:
-          package-path: "Packages/${{ env.name }}/${{ env.name }}-${{ env.version }}.unitypackage"
-          include-files: metaList
-
       - name: Upload UnityPackage to release
+        if: ${{ github.event.inputs.release_type != 'create' }}
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
