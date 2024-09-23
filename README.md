@@ -11,7 +11,7 @@ A simple VPM package template with **non-unity-structure** and GitHub Action wor
    After generating the repository, go to your repository's settings and enable workflows under `Settings > Actions > General`. Ensure that GitHub Actions have the necessary permissions to run. 🔒
 
 3. **Upload Your Files**  
-   Replace the template files with your own project files. Make sure to keep the `release.yml` workflow intact for automated release management. 📂
+   Replace the template files with your own project files. and push it on github. 📂
 
 ## 📦 Publishing a Release
 
