@@ -51,14 +51,20 @@ jobs:
           echo "::error title=Release Already Exists::A release with version ${{ env.version }} already exists. Cannot create duplicate releases."
           exit 1
 
+
+      - name: Delete existing release (for update)
+        if: ${{ github.event.inputs.release_type == 'update' && env.release_id != '' }}
+        run: |
+          curl -X DELETE -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+          "https://api.github.com/repos/${{ github.repository }}/releases/${{ env.release_id }}"
+
       - name: Create ZIP file
         run: |
           zip -r "${{ env.name }}-${{ env.version }}.zip" . \
           -x '.git/*' '.github/*' '*.md' '*.bak'
 
-      - name: Create a new release (if it doesn't exist)
+      - name: Create a new release (test or public)
         id: create_release
-        if: ${{ env.release_id == '' && (github.event.inputs.release_type == 'create' || github.event.inputs.release_type == 'test') }}
         uses: actions/create-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -68,30 +74,7 @@ jobs:
           draft: ${{ github.event.inputs.release_type == 'test' }}
           prerelease: false
 
-      - name: Upload files to existing release
-        if: ${{ env.release_id != '' }}
-        run: |
-          echo "Updating existing release..."
-          # Upload ZIP file
-          curl -X POST -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
-          -H "Content-Type: application/zip" \
-          --data-binary @"./${{ env.name }}-${{ env.version }}.zip" \
-          "https://uploads.github.com/repos/${{ github.repository }}/releases/${{ env.release_id }}/assets?name=${{ env.name }}-${{ env.version }}.zip"
-
-          # Upload package.json
-          curl -X POST -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
-          -H "Content-Type: application/json" \
-          --data-binary @"./package.json" \
-          "https://uploads.github.com/repos/${{ github.repository }}/releases/${{ env.release_id }}/assets?name=package.json"
-
-          # Upload UnityPackage
-          curl -X POST -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
-          -H "Content-Type: application/octet-stream" \
-          --data-binary @"./Packages/${{ env.name }}/${{ env.name }}-${{ env.version }}.unitypackage" \
-          "https://uploads.github.com/repos/${{ github.repository }}/releases/${{ env.release_id }}/assets?name=${{ env.name }}-${{ env.version }}.unitypackage"
-
-      - name: Upload files to new release
-        if: ${{ env.release_id == '' }}
+      - name: Upload ZIP to release
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -101,8 +84,7 @@ jobs:
           asset_name: "${{ env.name }}-${{ env.version }}.zip"
           asset_content_type: application/zip
 
-      - name: Upload package.json to new release
-        if: ${{ env.release_id == '' }}
+      - name: Upload package.json to release
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -134,3 +116,13 @@ jobs:
         with:
           package-path: "Packages/${{ env.name }}/${{ env.name }}-${{ env.version }}.unitypackage"
           include-files: metaList
+
+      - name: Upload UnityPackage to release
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: "./Packages/${{ env.name }}/${{ env.name }}-${{ env.version }}.unitypackage"
+          asset_name: "${{ env.name }}-${{ env.version }}.unitypackage"
+          asset_content_type: application/octet-stream
