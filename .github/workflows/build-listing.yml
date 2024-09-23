@@ -22,6 +22,12 @@ jobs:
     runs-on: ubuntu-latest
     if: github.event.release.draft == false
     steps:
+      - name: Check REPO_ACCESS_TOKEN
+        run: |
+          if [ -z "${{ secrets.REPO_ACCESS_TOKEN }}" ]; then
+            echo "REPO_ACCESS_TOKEN is not set. Exiting workflow."
+            exit 0
+          fi
       - name: Trigger VPM Workflow
         uses: actions/github-script@v7
         with:
