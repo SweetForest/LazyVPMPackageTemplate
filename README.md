@@ -50,7 +50,6 @@ To set up the workflow for updating the VPM:
    - Update your workflow YAML file located at `.github/workflows/build-listing.yml` to reference the secret and set up the necessary steps for triggering the workflow.
 ---
 
-https://github.com/settings/tokens
 
 ## 💖 Support Me
 
