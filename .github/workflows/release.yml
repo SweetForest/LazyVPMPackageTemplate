@@ -56,8 +56,9 @@ jobs:
           zip -r "${{ env.name }}-${{ env.version }}.zip" . \
           -x '.git/*' '.github/*' '*.md' '*.bak'
 
-      - name: Create a new release (test or public)
+      - name: Create a new release (if it doesn't exist)
         id: create_release
+        if: ${{ env.release_id == '' && (github.event.inputs.release_type == 'create' || github.event.inputs.release_type == 'test') }}
         uses: actions/create-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -67,7 +68,7 @@ jobs:
           draft: ${{ github.event.inputs.release_type == 'test' }}
           prerelease: false
 
-      - name: Upload files if release exists
+      - name: Upload files to existing release
         if: ${{ env.release_id != '' }}
         run: |
           echo "Updating existing release..."
@@ -100,7 +101,7 @@ jobs:
           asset_name: "${{ env.name }}-${{ env.version }}.zip"
           asset_content_type: application/zip
 
-      - name: Upload package.json to release
+      - name: Upload package.json to new release
         if: ${{ env.release_id == '' }}
         uses: actions/upload-release-asset@v1
         env:
