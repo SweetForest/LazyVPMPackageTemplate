@@ -56,7 +56,7 @@ jobs:
           zip -r "${{ env.name }}-${{ env.version }}.zip" . \
           -x '.git/*' '.github/*' '*.md' '*.bak'
 
-      - name: Create or update a release
+      - name: Create a new release (test or public)
         id: create_release
         uses: actions/create-release@v1
         env:
@@ -67,8 +67,30 @@ jobs:
           draft: ${{ github.event.inputs.release_type == 'test' }}
           prerelease: false
 
-      - name: Upload ZIP to release
-        if: ${{ github.event.inputs.release_type != 'create' }}
+      - name: Upload files if release exists
+        if: ${{ env.release_id != '' }}
+        run: |
+          echo "Updating existing release..."
+          # Upload ZIP file
+          curl -X POST -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+          -H "Content-Type: application/zip" \
+          --data-binary @"./${{ env.name }}-${{ env.version }}.zip" \
+          "https://uploads.github.com/repos/${{ github.repository }}/releases/${{ env.release_id }}/assets?name=${{ env.name }}-${{ env.version }}.zip"
+
+          # Upload package.json
+          curl -X POST -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+          -H "Content-Type: application/json" \
+          --data-binary @"./package.json" \
+          "https://uploads.github.com/repos/${{ github.repository }}/releases/${{ env.release_id }}/assets?name=package.json"
+
+          # Upload UnityPackage
+          curl -X POST -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+          -H "Content-Type: application/octet-stream" \
+          --data-binary @"./Packages/${{ env.name }}/${{ env.name }}-${{ env.version }}.unitypackage" \
+          "https://uploads.github.com/repos/${{ github.repository }}/releases/${{ env.release_id }}/assets?name=${{ env.name }}-${{ env.version }}.unitypackage"
+
+      - name: Upload files to new release
+        if: ${{ env.release_id == '' }}
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -79,7 +101,7 @@ jobs:
           asset_content_type: application/zip
 
       - name: Upload package.json to release
-        if: ${{ github.event.inputs.release_type != 'create' }}
+        if: ${{ env.release_id == '' }}
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -89,13 +111,25 @@ jobs:
           asset_name: "package.json"
           asset_content_type: application/json
 
-      - name: Upload UnityPackage to release
-        if: ${{ github.event.inputs.release_type != 'create' }}
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Copy files to Packages/${{ env.name }}
+        run: |
+          mkdir -p "Packages/${{ env.name }}"
+          rsync -av --exclude='.git' --exclude='.github' --exclude='*.md' --exclude='*.zip' . "Packages/${{ env.name }}/"
+
+      - name: List files in workspace
+        run: |
+          echo "Files in workspace:"
+          find . -type f
+
+      - run: find "Packages/${{ env.name }}/" -name \*.meta >> metaList
+      
+      - name: What is in metaList?
+        run: |
+          echo "Contents of metaList:"
+          cat metaList
+
+      - name: Create UnityPackage
+        uses: pCYSl5EDgo/create-unitypackage@master
         with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: "./Packages/${{ env.name }}/${{ env.name }}-${{ env.version }}.unitypackage"
-          asset_name: "${{ env.name }}-${{ env.version }}.unitypackage"
-          asset_content_type: application/octet-stream
+          package-path: "Packages/${{ env.name }}/${{ env.name }}-${{ env.version }}.unitypackage"
+          include-files: metaList
