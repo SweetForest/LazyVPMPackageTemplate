@@ -8,7 +8,7 @@ A simple VPM package template with **non-unity-structure** and GitHub Action wor
    [![Use this template](https://img.shields.io/badge/🌟%20Generate%20Template-Click%20Here-%234fc3f7?style=flat-square&logo=github&logoColor=white)](https://github.com/SweetForest/LazyVPMPackageTemplate/generate)
 
 2. **Set Workflow Permissions**  
-   After generating the repository, go to your repository's settings and enable workflows under `Settings > Actions > General`. Look at Workflow permissions and give Read and write permissions. 🔒
+   After generating the repository, go to your repository's settings and enable workflows under `Settings > Actions > General`. Look at **Workflow permissions** and give **Read and write permissions.** 🔒
 
 3. **Upload Your Files**  
    Replace the template files with your own project files. and push it on github. Make sure you still keep folder .github/workflows for automated release management. 📂
