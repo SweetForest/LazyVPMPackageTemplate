@@ -39,7 +39,7 @@ To set up the workflow for updating the VPM:
 1. **Generate Personal Access Token**:
    - Go to [GitHub Personal Access Tokens](https://github.com/settings/tokens).
    - Click on **"Generate new token"**.
-   - Select the necessary scopes (e.g., `repo`, `workflow`).
+   - Select the necessary scopes (`workflow`).
    - Copy the token after generating it.
 
 2. **Add the Token as a Secret**:
