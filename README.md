@@ -52,9 +52,11 @@ To set up the workflow for updating the VPM:
    - Update your workflow YAML file located at `.github/workflows/build-listing.yml` to reference the secret and set up the necessary steps for triggering the workflow.
 ---
 
-## 📂 Note About `.git_resources` Folder
+### 📂 `.git_resources`
 
 The `.git_resources` folder contains files like images for documentation purposes on GitHub (e.g., images used in the README file). These files will **not be included in the build process**.
+
+Similarly, the `README.md` file displayed on the main repository page serves as documentation only and will also **not be included in the build process**.
 
 ## 💖 Support Me
 
