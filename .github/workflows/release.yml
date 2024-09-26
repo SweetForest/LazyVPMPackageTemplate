@@ -71,10 +71,8 @@ jobs:
     needs: build-and-save
     runs-on: ubuntu-latest
     steps:
-      - name: List files in workspace
-        run: |
-          echo "Files in workspace before checking:"
-          find . -type f
+      - name: List contents of the current directory
+        run: ls -la
       - name: Check if required files exist
         run: |
           if [ ! -f "${{ env.package_json_path }}" ]; then
