@@ -97,7 +97,7 @@ jobs:
       - name: Copy files to Packages/${{ env.name }}
         run: |
           mkdir -p "Packages/${{ env.name }}"
-          rsync -av --exclude='.git' --exclude='.github' --exclude='*.md' --exclude='*.md.meta' --exclude='*.zip' . "Packages/${{ env.name }}/"
+          rsync -av --exclude='.git' --exclude='.github' --exclude='*.md' --exclude='*.md.meta' --exclude='${{ env.name }}-${{ env.version }}.zip' . "Packages/${{ env.name }}/"
 
       - name: List files in workspace
         run: |
