@@ -67,12 +67,6 @@ jobs:
           echo "ZIP file path: ${{ env.zip_path }}"
           echo "UnityPackage path: ${{ env.unitypackage_path }}"
           
-  upload-assets:
-    needs: build-and-save
-    runs-on: ubuntu-latest
-    steps:
-      - name: List contents of the current directory
-        run: ls -la
       - name: Check if required files exist
         run: |
           if [ ! -f "${{ env.package_json_path }}" ]; then
