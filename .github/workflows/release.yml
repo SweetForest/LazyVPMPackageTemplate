@@ -46,7 +46,7 @@ jobs:
       - name: Copy files to Packages/${{ env.name }}
         run: |
           mkdir -p "Packages/${{ env.name }}"
-          rsync -av --exclude='.git' --exclude='.github' --exclude=''.git_resources' --exclude='*.md' --exclude='*.md.meta' --exclude='${{ env.name }}-${{ env.version }}.zip' . "Packages/${{ env.name }}/"
+          rsync -av --exclude='.git' --exclude='.github' --exclude='.git_resources' --exclude='*.md' --exclude='*.md.meta' --exclude='${{ env.name }}-${{ env.version }}.zip' . "Packages/${{ env.name }}/"
 
       - run: find "Packages/${{ env.name }}/" -name \*.meta >> metaList
     
