@@ -1,7 +1,7 @@
 {
   "name": "sweetforest.example.lazyvpmpackagetemplate",
   "version": "1.1.0",
-  "displayName": "Lazy VPM Example Package Template Update",
+  "displayName": "Lazy VPM Example Package Template",
   "description": "Edit package.json to fit your needs and preferences.",
   "unity": "2022.3",
   "author": {
