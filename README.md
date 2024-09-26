@@ -13,10 +13,6 @@ A simple VPM package template with **non-unity-structure** and GitHub Action wor
 3. **Upload Your Files**  
    Replace the template files with your own project files. and push it on github. Make sure you still keep folder .github/workflows for automated release management. 📂
    
-## 📂 About the `.git_resources` Folder
-
-The `.git_resources` folder contains resources such as images or other assets specifically for use on GitHub (e.g., images used in your README file). These files are meant for documentation purposes and will **not be included in the build process**. Keep this folder intact to ensure your repository displays correctly on GitHub.
-
 ## 📦 Publishing a Release
 
 The release process is managed through the `release.yml` file in the `/actions/workflows/` directory. The workflow offers three modes of operation: **Create**, **Update**, and **Test**. When triggering a workflow manually, you can choose one of these options:
@@ -56,6 +52,9 @@ To set up the workflow for updating the VPM:
    - Update your workflow YAML file located at `.github/workflows/build-listing.yml` to reference the secret and set up the necessary steps for triggering the workflow.
 ---
 
+## 📂 Note About `.git_resources` Folder
+
+The `.git_resources` folder contains files like images for documentation purposes on GitHub (e.g., images used in the README file). These files will **not be included in the build process**.
 
 ## 💖 Support Me
 
