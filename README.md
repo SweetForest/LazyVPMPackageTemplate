@@ -21,7 +21,7 @@ The release process is managed through the `release.yml` file in the `/actions/w
   This will create a public release. 🌍 Before releasing, it checks if the version you're about to release already exists. If it does, the release process will abort to avoid duplicates. ❌
 
 - **Update**:  
-  This mode will also create a public release, but if a release with the same version already exists, it will automatically delete the existing release and create a new one. 🔄
+  This mode will update the existing release version by uploading all new build files, while keeping the release notes intact. 🔄
 
 - **Test**:  
   This mode will create a **draft** release, allowing you to test the release process without making it public. 📝
