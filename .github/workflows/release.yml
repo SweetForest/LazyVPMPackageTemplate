@@ -88,7 +88,6 @@ jobs:
           echo "Ready to upload package.json: ${{ env.package_json_path }}"
           echo "Ready to upload ZIP: ${{ env.zip_path }}"
           echo "Ready to upload UnityPackage: ${{ env.unitypackage_path }}"
-
       - name: Check for existing release
         id: check_release
         run: |
@@ -111,9 +110,14 @@ jobs:
       - name: Create release and upload files
         if: ${{ github.event.inputs.release_type == 'create' || github.event.inputs.release_type == 'test' }}
         run: |
+          is_draft=false
+          if [[ "${{ github.event.inputs.release_type }}" == "test" ]]; then
+            is_draft=true
+          fi
+
           release_response=$(curl -s -X POST -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
             -H "Content-Type: application/json" \
-            -d "{\"tag_name\": \"${{ env.version }}\", \"name\": \"Release ${{ env.version }}\", \"body\": \"Release notes here\", \"draft\": ${github.event.inputs.release_type == 'test'}, \"prerelease\": false}" \
+            -d "{\"tag_name\": \"${{ env.version }}\", \"name\": \"Release ${{ env.version }}\", \"body\": \"Release notes here\", \"draft\": $is_draft, \"prerelease\": false}" \
             "https://api.github.com/repos/${{ github.repository }}/releases")
           release_id=$(echo "$release_response" | jq -r '.id')
           echo "Created release with ID: $release_id"
@@ -153,7 +157,6 @@ jobs:
           done
 
           # Upload new files logic here (same as create)
-          # Assuming assets paths are stored as in the create section
           for asset in ${{ env.package_json_path }} ${{ env.zip_path }} ${{ env.unitypackage_path }}; do
             echo "Uploading asset: $asset"
             curl -s -X POST -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
@@ -161,6 +164,8 @@ jobs:
               --data-binary @$asset \
               "https://uploads.github.com/repos/${{ github.repository }}/releases/${{ env.release_id }}/assets?name=$(basename $asset)"
           done
+
       - name: Process completed
         run: |
           echo "Process is completed"
+
