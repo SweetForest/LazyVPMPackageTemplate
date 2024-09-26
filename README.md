@@ -12,6 +12,10 @@ A simple VPM package template with **non-unity-structure** and GitHub Action wor
 
 3. **Upload Your Files**  
    Replace the template files with your own project files. and push it on github. Make sure you still keep folder .github/workflows for automated release management. 📂
+   
+## 📂 About the `.git_resources` Folder
+
+The `.git_resources` folder contains resources such as images or other assets specifically for use on GitHub (e.g., images used in your README file). These files are meant for documentation purposes and will **not be included in the build process**. Keep this folder intact to ensure your repository displays correctly on GitHub.
 
 ## 📦 Publishing a Release
 
