@@ -2,7 +2,7 @@
 name: Deploy static content to Pages
 
 env:
-  listPublishDirectory: ../.git_resources/html
+  listPublishDirectory: /.git_resources/html
   
 on:
 
