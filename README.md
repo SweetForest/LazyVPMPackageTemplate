@@ -60,6 +60,6 @@ Similarly, the `README.md` file displayed on the main repository page serves as 
 
 ## 💖 Support Me
 
-Visit my booth for supporting me [SweetForest's Booth](https://sweetforest.booth.pm)
+Visit my booth for supporting me [SweetForest's Gumroad](https://sweetforest.gumroad.com/)
 
 ---
